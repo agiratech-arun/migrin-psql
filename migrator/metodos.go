@@ -1,7 +1,7 @@
 package migrator
 
 import(
-	"github.com:agiratech-arun/migrin-psql/connector"
+	"github.com/agiratech-arun/migrin-psql/connector"
 	"strconv"
 	"fmt"
 )

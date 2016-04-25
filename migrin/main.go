@@ -8,8 +8,8 @@ import(
 	"os/exec"
 	"log"
 	"bufio"
-	"github.com:agiratech-arun/migrin-psql/connector"
-	"github.com:agiratech-arun/migrin-psql/migrator"
+	"github.com/agiratech-arun/migrin-psql/connector"
+	"github.com/agiratech-arun/migrin-psql/migrator"
 	"io/ioutil"
 	"strings"
 	"bytes"
@@ -182,7 +182,7 @@ func create_file_migration(file_path string){
 
 	columnBuilderName := "column"
 	w := bufio.NewWriter(f)
-	imports := "\n\t\"github.com:agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
+	imports := "\n\t\"github.com/agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
 	main_body := "\n\t//Write here your migration sentences. Next line is necessary for configuration\n\tmigrator.Options(os.Args)\n"
 	if len(*column_args) > 0{
 		main_body += "\n\t" + columnBuilderName +":= []migrator.ColumnBuilder{"
