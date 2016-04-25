@@ -97,7 +97,7 @@ func (this Migrin) create_down_file(timestamp,filename string) {
 	if !existFolder(folder){
     os.Mkdir(folder,0777)
  	}
- 	create_file_migration(folder+"/"+timestamp+"_"+filename+".go")
+ 	create_down_file_migration(folder+"/"+timestamp+"_"+filename+".go")
 }
 
 func (this Migrin) init(){
@@ -168,6 +168,21 @@ func migration_executed(timestamp string) bool{
 	return rows.Next()
 }
 
+func create_down_file_migration(file_path string) {
+  w := bufio.NewWriter(f)
+  imports := "\n\t\"github.com/agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
+  main_body := "\n\tmigrator.DropTable"(" + "\"" +customeTable + ")"
+  line := "package main \n\nimport("+imports+")\n\nfunc main(){"+main_body
+  line += "\n}"
+  _,err = w.WriteString(line)
+  if err != nil{
+    log.Fatal(err)
+  }
+  f.Sync()
+  w.Flush()
+
+}
+
 func create_file_migration(file_path string){
 	customeTable := *table
 	customeMethod := *method
@@ -179,7 +194,6 @@ func create_file_migration(file_path string){
 	}
 
 	option := GetOption(customeMethod)
-
 	columnBuilderName := "column"
 	w := bufio.NewWriter(f)
 	imports := "\n\t\"github.com/agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
