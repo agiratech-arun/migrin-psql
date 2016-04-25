@@ -121,15 +121,22 @@ func ChangeColumn(table string,column ColumnBuilder){
 }
 
 
-func AddColum(table string, this ColumnBuilder){
+func AddColum(table string, columns []ColumnBuilder){
 	acceptValues := []string {"nvarchar","varchar"}
-	query := "ALTER TABLE "+table+" ADD COLUMN "+ this.Name + " " + this.Data_type + ""
-	if(Contains(acceptValues, this.Data_type)){
-		if(this.Length <= 0){
-			 this.Length = 255
+	columns_count := len(columns)
+	query := "ALTER TABLE "+table
+	for index,this := range columns {
+		query += " ADD COLUMN "+ this.Name + " " + this.Data_type
+
+		if(Contains(acceptValues, this.Data_type)){
+			if(this.Length <= 0){
+				 this.Length = 255
+			}
+			query += "(" + 	strconv.Itoa(this.Length)  + ")"
 		}
-		query += "(" + 	strconv.Itoa(this.Length)  + ")"
-	}
+		if  index +1 < columns_count {  query += ","}
+  }
+  fmt.Println(query)
 	connector.Query(query)
 }
 
