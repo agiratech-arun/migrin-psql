@@ -169,6 +169,11 @@ func migration_executed(timestamp string) bool{
 }
 
 func create_down_file_migration(file_path string) {
+  f,err := os.Create(file_path)
+  defer f.Close()
+  if err != nil{
+    log.Fatal(err)
+  }
   w := bufio.NewWriter(f)
   imports := "\n\t\"github.com/agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
   main_body := "\n\tmigrator.DropTable"+"(" + "\"" +customeTable + ")"
