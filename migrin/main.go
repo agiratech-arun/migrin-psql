@@ -17,6 +17,13 @@ import(
 
 type columns []migrator.ColumnBuilder
 
+type migration struct {
+  Id int
+  MigrationId string
+  MigrationName string
+  Status string
+}
+
 func (this *columns) Set(value string) error{
 	if value == ""{
 		return fmt.Errorf("'%s' is not a valid column name", value)
@@ -145,21 +152,23 @@ func (this Migrin) up() {
   	name_components := strings.Split(f.Name(),"_")
   	if len(name_components) > 0 && !migration_executed(name_components[0]){
   		execute_migration(f,initFolderNameMigration)
-  		connector.Query("INSERT INTO migrations(migration_id) VALUES('"+name_components[0]+"')")
+      query := fmt.Sprintf("INSERT INTO migrations(migration_id, migration_name) VALUES('%s','%s')",name_components[0],f.Name())
+  		connector.Query(query)
   	}
   }
 }
 
 func (this Migrin) down() {
-	files, _ := ioutil.ReadDir(initFolderNameMigrationDown)
-  for _, f := range files {
-
-  	name_components := strings.Split(f.Name(),"_")
-  	if len(name_components) > 0 && migration_executed(name_components[0]){
-  		execute_migration(f,initFolderNameMigrationDown)
-  		connector.Query("DELETE FROM migrations WHERE migration_id = '"+name_components[0]+"'")
-  		break
-  	}
+  var mig migration
+  rows := connector.GetQuery("select * from migrations order by migration_id DESC limit 1")
+  for rows.Next() {
+    rows.Scan(&mig.Id,&mig.MigrationId,&mig.Status,&mig.MigrationName)
+  }
+  file, _ := os.Open(initFolderNameMigrationDown+"/"+mig.MigrationName)
+  file_info, err := file.Stat()
+  if err == nil && migration_executed(mig.MigrationId){
+    execute_migration(file_info,initFolderNameMigrationDown)
+    connector.Query("DELETE FROM migrations WHERE migration_id = '"+mig.MigrationId+"'")
   }
 }
 
@@ -247,8 +256,8 @@ func execute_migration(file os.FileInfo,file_path string) bool{
 		cmd.Stderr = &stderr
 		err := cmd.Run()
 		if err != nil {
-		    fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		    return false
+      fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+		  return false
 		}else{
 			return true
 		}
