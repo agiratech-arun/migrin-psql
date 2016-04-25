@@ -177,7 +177,7 @@ func create_down_file_migration(file_path string) {
   }
   w := bufio.NewWriter(f)
   imports := "\n\t\"github.com/agiratech-arun/migrin-psql/migrator\"\n\t \"os\"\n"
-  main_body := "\n\tmigrator.DropTable"+"(" + "\"" +customeTable + ")"
+  main_body := "\n\tmigrator.DropTable(" + "\"" +customeTable + "\""  + ")"
   line := "package main \n\nimport("+imports+")\n\nfunc main(){"+main_body
   line += "\n}"
   _,err = w.WriteString(line)
