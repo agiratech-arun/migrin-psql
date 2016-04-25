@@ -46,7 +46,7 @@ func connect_db() *sql.DB{
 
 func Run(){
 	db := connect_db()
-	_,err := db.Exec("create table IF NOT EXISTS (id int NOT NULL AUTO_INCREMENT PRIMARY KEY,migration_id varchar(20) NOT NULL,status int DEFAULT 0)")
+	_,err := db.Exec("create table IF NOT EXISTS migrations( ID SERIAL PRIMARY KEY, migration_id varchar(20) NOT NULL, status int DEFAULT 0)")
 	if err != nil{
 		log.Fatal(err)
 	}
