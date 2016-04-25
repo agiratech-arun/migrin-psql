@@ -169,6 +169,7 @@ func migration_executed(timestamp string) bool{
 }
 
 func create_down_file_migration(file_path string) {
+  customeTable := *table
   f,err := os.Create(file_path)
   defer f.Close()
   if err != nil{
