@@ -46,9 +46,7 @@ func connect_db() *sql.DB{
 
 func Run(){
 	db := connect_db()
-	if !rows.Next(){
-		_,err = db.Exec("create table IF NOT EXISTS (id int NOT NULL AUTO_INCREMENT PRIMARY KEY,migration_id varchar(20) NOT NULL,status int DEFAULT 0)")
-	}
+	_,err = db.Exec("create table IF NOT EXISTS (id int NOT NULL AUTO_INCREMENT PRIMARY KEY,migration_id varchar(20) NOT NULL,status int DEFAULT 0)")
 }
 func InsertMigration(timestamp string){
 	db := connect_db()
